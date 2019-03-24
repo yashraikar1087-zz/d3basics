@@ -11,19 +11,40 @@ var svg = d3
   .attr("width", svgWidth)
   .attr("height", svgHeight);
 
+var yScale = d3
+  .scaleLinear()
+  .domain([0, d3.max(dataset)])
+  .range([0, svgHeight]);
+
 var barChart = svg
   .selectAll("rect")
   .data(dataset)
   .enter()
   .append("rect")
   .attr("y", function(d) {
-    return svgHeight - d;
+    return svgHeight - yScale(d);
   })
   .attr("height", function(d) {
-    return d;
+    return yScale(d);
   })
   .attr("width", barWidth - barPadding)
   .attr("transform", function(d, i) {
     var translate = [barWidth * i, 0];
     return "translate(" + translate + ")";
   });
+
+var text = svg
+  .selectAll("text")
+  .data(dataset)
+  .enter()
+  .append("text")
+  .text(function(d) {
+    return d;
+  })
+  .attr("y", function(d, i) {
+    return svgHeight - d - 2;
+  })
+  .attr("x", function(d, i) {
+    return barWidth * i;
+  })
+  .attr("fill", "red");
